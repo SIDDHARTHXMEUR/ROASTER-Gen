@@ -41,32 +41,32 @@ RosterGen is built on a decoupled, production-grade three-tier web architecture:
 
 ```mermaid
 graph TB
-    subgraph Client UI Tier (Next.js 14 App Router)
-        UI1[Weekly Roster - /]
-        UI2[Budget Planner - /budget]
-        UI3[Station Matcher - /stations]
-        UI4[Personnel Directory - /search]
-        UI5[Demand Forecast - /forecast]
-        ZUSTAND[Zustand Store - src/lib/store.ts]
-        EVAL[Evaluator Telemetry Drawer]
+    subgraph Client["Client UI Tier - Next.js 14 App Router"]
+        UI1["Weekly Roster - /"]
+        UI2["Budget Planner - /budget"]
+        UI3["Station Matcher - /stations"]
+        UI4["Personnel Directory - /search"]
+        UI5["Demand Forecast - /forecast"]
+        ZUSTAND["Zustand Store - src/lib/store.ts"]
+        EVAL["Evaluator Telemetry Drawer"]
     end
 
-    subgraph Algorithm Engine Tier (src/lib/algorithms/)
-        ALG1[Backtracking Solver with AC-3]
-        ALG2[0/1 Knapsack DP Solver]
-        ALG3[Branch & Bound Matcher]
-        ALG4[KMP Substring Matcher]
-        ALG5[Merge Sort & Quick Sort]
-        ALG6[Monte Carlo Risk Engine]
+    subgraph Engine["Algorithm Engine Tier - src/lib/algorithms/"]
+        ALG1["Backtracking Solver with AC-3"]
+        ALG2["0/1 Knapsack DP Solver"]
+        ALG3["Branch & Bound Matcher"]
+        ALG4["KMP Substring Matcher"]
+        ALG5["Merge Sort & Quick Sort"]
+        ALG6["Monte Carlo Risk Engine"]
     end
 
-    subgraph Data & Persistence Tier (Supabase Postgres)
-        DB1[(employees)]
-        DB2[(shifts)]
-        DB3[(stations)]
-        DB4[(roster_assignments)]
-        DB5[(swap_requests & overtime_requests)]
-        AUTH[Supabase Auth & RLS Profiles]
+    subgraph Persistence["Data & Persistence Tier - Supabase Postgres"]
+        DB1[("employees")]
+        DB2[("shifts")]
+        DB3[("stations")]
+        DB4[("roster_assignments")]
+        DB5[("swap_requests & overtime_requests")]
+        AUTH["Supabase Auth & RLS Profiles"]
     end
 
     UI1 --> ZUSTAND
