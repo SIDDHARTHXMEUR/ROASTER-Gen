@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><title>RosterGen</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-bright": "#f9f9ff", "primary-fixed-dim": "#b4c5ff", "primary-container": "#2563eb", "on-surface-variant": "#434655", "surface": "#f9f9ff", "surface-dim": "#d3daef", "inverse-on-surface": "#edf0ff", "on-primary-fixed-variant": "#003ea8", "primary-fixed": "#dbe1ff", "error": "#ba1a1a", "surface-container": "#e9edff", "surface-tint": "#0053db", "tertiary-fixed-dim": "#ffb77d", "on-primary": "#ffffff", "on-secondary-fixed": "#002114", "on-primary-fixed": "#00174b", "tertiary-container": "#a65900", "outline-variant": "#c3c6d7", "on-tertiary-container": "#ffede1", "on-surface": "#141b2b", "surface-container-low": "#f1f3ff", "on-primary-container": "#eeefff", "background": "#f9f9ff", "on-secondary": "#ffffff", "on-tertiary-fixed": "#2f1500", "secondary": "#006c4a", "on-background": "#141b2b", "on-error": "#ffffff", "surface-container-highest": "#dce2f7", "on-secondary-container": "#00714e", "surface-container-high": "#e1e8fd", "secondary-fixed-dim": "#68dba9", "secondary-fixed": "#85f8c4", "tertiary": "#824500", "inverse-surface": "#293040", "surface-container-lowest": "#ffffff", "error-container": "#ffdad6", "secondary-container": "#82f5c1", "tertiary-fixed": "#ffdcc3", "on-tertiary-fixed-variant": "#6e3900", "on-tertiary": "#ffffff", "on-error-container": "#93000a", "primary": "#004ac6", "on-secondary-fixed-variant": "#005137", "inverse-primary": "#b4c5ff", "surface-variant": "#dce2f7", "outline": "#737686" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-md": "1.5rem", "space-xs": "0.25rem", "margin": "1rem", "space-lg": "1.5rem", "gutter-md": "1.25rem", "gutter": "1rem", "space-xl": "2rem", "space-sm": "0.5rem", "space-md": "1rem", "margin-lg": "2rem", "gutter-lg": "1.5rem" }, "fontFamily": { "headline-lg": ["Inter"], "display": ["Inter"], "headline-lg-mobile": ["Inter"], "body-sm": ["Inter"], "label-md": ["Inter"], "tabular-stat": ["Inter"], "body-lg": ["Inter"], "label-sm": ["Inter"], "body-md": ["Inter"], "label-lg": ["Inter"], "headline-sm": ["Inter"], "headline-md": ["Inter"] }, "fontSize": { "headline-lg": ["2.25rem", { "lineHeight": "1.2", "letterSpacing": "-0.025em", "fontWeight": "700" }], "display": ["3.5rem", { "lineHeight": "1.1", "letterSpacing": "-0.03em", "fontWeight": "700" }], "headline-lg-mobile": ["1.75rem", { "lineHeight": "1.25", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-sm": ["0.875rem", { "lineHeight": "1.45", "letterSpacing": "0em", "fontWeight": "400" }], "label-md": ["0.75rem", { "lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "600" }], "tabular-stat": ["1.5rem", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-lg": ["1.125rem", { "lineHeight": "1.5", "letterSpacing": "-0.01em", "fontWeight": "400" }], "label-sm": ["0.6875rem", { "lineHeight": "1.15", "letterSpacing": "0.04em", "fontWeight": "600" }], "body-md": ["1rem", { "lineHeight": "1.5", "letterSpacing": "-0.005em", "fontWeight": "400" }], "label-lg": ["0.875rem", { "lineHeight": "1.25", "letterSpacing": "0.01em", "fontWeight": "600" }], "headline-sm": ["1.25rem", { "lineHeight": "1.35", "letterSpacing": "-0.015em", "fontWeight": "600" }], "headline-md": ["1.5rem", { "lineHeight": "1.3", "letterSpacing": "-0.02em", "fontWeight": "600" }] } } } };</script><style>@layer base { html, body { width: 100vw; margin: 0; padding: 0; } body { overscroll-behavior: none; } .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); } .pt-safe { padding-top: env(safe-area-inset-top, 0px); } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen flex flex-col"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-gutter flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><img alt="RosterGen Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1Xq7rCC1pbxU4nVbZespthKK8-nGYAyuearRsnnOMTqpfxidAQ4VfamU_qVK-90rGstbckxLGXoV99wASDNIV03-RKJQ9rn_IdZo8zpI0W-vGmWbZHJH1tG3C_HBhFYFzqlFWl-EMl2EPJIgAu4udjqkigkPSBMqBjvo0Rz9S6ZzmRjKMLN_13sGaqOL118Z5WS_D_ji1HVHGpBS1g4KtATp4i9Yc-nxglKUARNpn897S4DnI3FUCluSA"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm tracking-tight text-on-surface font-bold leading-none">RosterGen</span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider leading-none mt-0.5">Station Assignment</span></div></div><div class="flex items-center gap-space-xs"><div class="relative flex items-center bg-surface-container-high rounded-full px-2.5 py-1"><label class="sr-only" for="role-select-tab">Select Role</label><span class="material-symbols-outlined text-[16px] text-primary mr-1">insights</span><select class="bg-transparent font-label-md text-label-md text-primary font-bold focus:outline-none appearance-none pr-4 cursor-pointer" id="role-select-tab"><option selected="" value="Evaluator">Evaluator</option><option value="Manager">Manager</option><option value="Employee">Employee</option><option value="Owner">Owner</option><option value="Recruiter">Recruiter</option></select><span class="material-symbols-outlined text-[14px] text-primary absolute right-2 pointer-events-none">expand_more</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 w-full bg-surface pt-16 pb-28 px-gutter flex flex-col"><div class="flex flex-col w-full pb-10 space-y-space-md">
+<!-- Interactive Toast / Notification Slot -->
+<div class="hidden rounded-lg bg-secondary-container text-on-secondary-container px-space-md py-space-sm flex items-center justify-between shadow-sm transition-all" id="status-toast">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span class="font-label-md text-label-md" id="toast-message">Optimal Branch and Bound matrix loaded!</span>
+</div>
+<button class="text-on-secondary-container hover:opacity-75" onclick="dismissToast()">
+<span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+</div>
+<!-- Top Bar Controls: Shift Context & Auto-Assign Action -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-bold">Operational Shift</span>
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-secondary bg-secondary-container/40 px-2 py-0.5 rounded-full font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+        Live Execution
+      </span>
+</div>
+<div class="relative w-full">
+<label class="sr-only" for="shift-select">Select Shift Window</label>
+<div class="flex items-center justify-between w-full bg-surface-container-low px-space-sm py-2.5 rounded-lg text-on-surface">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0">event_available</span>
+<select class="bg-transparent font-label-lg text-label-lg font-bold text-on-surface focus:outline-none appearance-none cursor-pointer w-full pr-6 truncate" id="shift-select">
+<option selected="" value="mon-morn">Monday Oct 21 · Morning (06:00 - 14:00)</option>
+<option value="mon-aft">Monday Oct 21 · Afternoon (14:00 - 22:00)</option>
+<option value="mon-night">Monday Oct 21 · Night (22:00 - 06:00)</option>
+</select>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant pointer-events-none text-[18px] absolute right-3">expand_more</span>
+</div>
+</div>
+<div class="pt-1">
+<button class="w-full min-h-[44px] bg-primary-container text-on-primary font-label-lg text-label-lg rounded-lg py-2.5 px-4 flex items-center justify-center gap-2 shadow-sm active:scale-[0.99] transition-transform" id="btn-auto-assign" onclick="runAutoAssign()">
+<span class="material-symbols-outlined text-[18px] text-on-primary">bolt</span>
+<span class="tracking-wide">AUTO-ASSIGN STATIONS</span>
+</button>
+</div>
+</div>
+<!-- Operational Telemetry Bento Banner -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">query_stats</span>
+<span class="font-label-md text-label-md text-on-surface font-bold uppercase tracking-wider">Shift Health Overview</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Real-Time Fit Score</span>
+</div>
+<div class="grid grid-cols-3 gap-2">
+<div class="bg-surface-container-low p-2.5 rounded-lg flex flex-col items-center justify-center text-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Average Fit</span>
+<span class="font-tabular-stat text-tabular-stat text-secondary font-bold" id="metric-avg-fit">92.4%</span>
+<span class="font-label-sm text-label-sm text-secondary flex items-center mt-0.5">
+<span class="material-symbols-outlined text-[12px]">trending_up</span> +4.1%
+        </span>
+</div>
+<div class="bg-surface-container-low p-2.5 rounded-lg flex flex-col items-center justify-center text-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Coverage</span>
+<span class="font-tabular-stat text-tabular-stat text-on-surface font-bold">4/4</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Active Units</span>
+</div>
+<div class="bg-surface-container-low p-2.5 rounded-lg flex flex-col items-center justify-center text-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Standby</span>
+<span class="font-tabular-stat text-tabular-stat text-primary font-bold">3</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Pool Staff</span>
+</div>
+</div>
+</div>
+<!-- Station Bento Grid List -->
+<div class="space-y-space-sm">
+<div class="flex items-center justify-between px-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">Active Station Assignments</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant">4 Workstations</span>
+</div>
+<!-- Card 1: Main Register / POS -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-3 relative overflow-hidden transition-all hover:shadow-md">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-secondary"></div>
+<div class="flex items-start justify-between pl-1">
+<div class="min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded font-bold uppercase">Front Desk</span>
+<span class="font-label-sm text-label-sm text-secondary bg-secondary-container/40 text-on-secondary-container px-2 py-0.5 rounded-full font-bold">98% Fit</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Main Register / POS</h3>
+</div>
+<button aria-label="Reorder Main Register" class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant shrink-0 cursor-grab active:cursor-grabbing">
+<span class="material-symbols-outlined text-[18px]">drag_indicator</span>
+</button>
+</div>
+<!-- Required Competencies -->
+<div class="flex flex-wrap gap-1.5 pl-1">
+<span class="inline-flex items-center gap-1 bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[13px] text-secondary">check_circle</span> Customer Service Tier 2
+        </span>
+<span class="inline-flex items-center gap-1 bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[13px] text-secondary">check_circle</span> POS Certified
+        </span>
+</div>
+<!-- Assigned Member Row -->
+<div class="bg-surface-container-low p-2.5 rounded-lg flex items-center justify-between mt-0.5 pl-2">
+<div class="flex items-center gap-2.5 min-w-0">
+<img class="w-9 h-9 rounded-full object-cover shrink-0 bg-surface-container-highest" data-alt="Close up modern professional studio headshot of Elena Rostova, senior retail cashier with warm confident expression, natural lighting, high detail photographic quality" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfCssNxI3jaRCFYFuhufP4iXV1UStD8MHiKohAYK_WPteO0WSsAeLlhOiZmy4o1tGzqAaTjETAUYzP2ONvXhNMzDyia35jEgchncaESTlHdBqkKp1zZyz-y8wHPajPu3gN5G46zhiRj6jBUhkLvMJyiiCnhnM4JHSgpup9-nPNLHRe0dEwwgY6d8wEdBAV2eKPUOea0XSwXuglnlf7Yr00UmfMMTFgAgCxP3z5QTqQFVuKaJjKwa8"/>
+<div class="min-w-0">
+<p class="font-label-lg text-label-lg text-on-surface font-bold truncate">Elena Rostova</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant truncate">Senior Cashier · Hourly $24.50</p>
+</div>
+</div>
+<button class="min-h-[36px] px-2.5 py-1 text-primary hover:bg-surface-container font-label-md text-label-md rounded flex items-center gap-1 transition-colors" onclick="promptSwap('Elena Rostova', 'Main Register / POS')">
+<span class="material-symbols-outlined text-[15px]">swap_horiz</span>
+<span>Reassign</span>
+</button>
+</div>
+</div>
+<!-- Card 2: Kitchen Prep & Line -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-3 relative overflow-hidden transition-all hover:shadow-md">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-secondary"></div>
+<div class="flex items-start justify-between pl-1">
+<div class="min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded font-bold uppercase">Kitchen</span>
+<span class="font-label-sm text-label-sm text-secondary bg-secondary-container/40 text-on-secondary-container px-2 py-0.5 rounded-full font-bold">94% Fit</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Kitchen Prep &amp; Line</h3>
+</div>
+<button aria-label="Reorder Kitchen Prep" class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant shrink-0 cursor-grab active:cursor-grabbing">
+<span class="material-symbols-outlined text-[18px]">drag_indicator</span>
+</button>
+</div>
+<div class="flex flex-wrap gap-1.5 pl-1">
+<span class="inline-flex items-center gap-1 bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[13px] text-secondary">check_circle</span> Food Safety L3
+        </span>
+<span class="inline-flex items-center gap-1 bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[13px] text-secondary">check_circle</span> Line Cooking
+        </span>
+</div>
+<div class="bg-surface-container-low p-2.5 rounded-lg flex items-center justify-between mt-0.5 pl-2">
+<div class="flex items-center gap-2.5 min-w-0">
+<img class="w-9 h-9 rounded-full object-cover shrink-0 bg-surface-container-highest" data-alt="Portrait photo of Marcus Vance, experienced culinary prep cook wearing dark apron, confident posture in bright professional commercial kitchen setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKhSgUj2ghQ_gN3zeun6fI9KbxPtGmYJ0mtkUfSyMeARrgU95PL70NDRWVWGZb8Y9rCPb7rgO6foOI--jpPn_ejwI2ENb5NkxxTGocQZuXmf2VX0b7O2y1OFq3pxpyiN2bwtvdwvxTS7A23IKyWQW88uXZhz-ZVcxCWD-DxsFBlnFI9X23zd6gksfNdZuLyCJbHpC3-ES60aYHlkZWV113kn0K1uxrf-m3yFlgCkzXnLnEEYn5Dq8"/>
+<div class="min-w-0">
+<p class="font-label-lg text-label-lg text-on-surface font-bold truncate">Marcus Vance</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant truncate">Prep Cook · Hourly $21.00</p>
+</div>
+</div>
+<button class="min-h-[36px] px-2.5 py-1 text-primary hover:bg-surface-container font-label-md text-label-md rounded flex items-center gap-1 transition-colors" onclick="promptSwap('Marcus Vance', 'Kitchen Prep &amp; Line')">
+<span class="material-symbols-outlined text-[15px]">swap_horiz</span>
+<span>Reassign</span>
+</button>
+</div>
+</div>
+<!-- Card 3: Warehouse Inbound Staging -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-3 relative overflow-hidden transition-all hover:shadow-md">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-secondary"></div>
+<div class="flex items-start justify-between pl-1">
+<div class="min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded font-bold uppercase">Warehouse</span>
+<span class="font-label-sm text-label-sm text-secondary bg-secondary-container/40 text-on-secondary-container px-2 py-0.5 rounded-full font-bold">91% Fit</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Warehouse Inbound Staging</h3>
+</div>
+<button aria-label="Reorder Warehouse Staging" class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant shrink-0 cursor-grab active:cursor-grabbing">
+<span class="material-symbols-outlined text-[18px]">drag_indicator</span>
+</button>
+</div>
+<div class="flex flex-wrap gap-1.5 pl-1">
+<span class="inline-flex items-center gap-1 bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[13px] text-secondary">check_circle</span> Forklift Certified
+        </span>
+<span class="inline-flex items-center gap-1 bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[13px] text-secondary">check_circle</span> Hazmat Basics
+        </span>
+</div>
+<div class="bg-surface-container-low p-2.5 rounded-lg flex items-center justify-between mt-0.5 pl-2">
+<div class="flex items-center gap-2.5 min-w-0">
+<img class="w-9 h-9 rounded-full object-cover shrink-0 bg-surface-container-highest" data-alt="Professional headshot of David Kim, logistics warehouse specialist smiling slightly with clean high-visibility apparel in a structured logistics facility" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWkuEKQqIW_PTCoYWO4NIPuz5r26euZ6WWtZcjPD-NEDgB61TZz-VF9lTPAU85fpUIGcvVzlA46-5n2OgRTUJevQGxehUlfvCoAkIgG7dJPx245U_s0rcZQrza5rUKCjzvibFs87wOtxHmEa4tnhnNlniEevS8yUzsS6RZxPJZMPn7UpMlH3Z7eVqJG6h8l0p_PeEBKyKskv8gAY0SmXE0hClfBE_0jmu_7HXNfbiVQmG3fykdrr8"/>
+<div class="min-w-0">
+<p class="font-label-lg text-label-lg text-on-surface font-bold truncate">David Kim</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant truncate">Logistics Assoc. · Hourly $23.00</p>
+</div>
+</div>
+<button class="min-h-[36px] px-2.5 py-1 text-primary hover:bg-surface-container font-label-md text-label-md rounded flex items-center gap-1 transition-colors" onclick="promptSwap('David Kim', 'Warehouse Inbound Staging')">
+<span class="material-symbols-outlined text-[15px]">swap_horiz</span>
+<span>Reassign</span>
+</button>
+</div>
+</div>
+<!-- Card 4: Secondary Register & Restock (Mismatch Warning) -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-3 relative overflow-hidden transition-all hover:shadow-md" id="mismatch-card">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-tertiary" id="mismatch-indicator"></div>
+<div class="flex items-start justify-between pl-1">
+<div class="min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded font-bold uppercase">Restock</span>
+<span class="font-label-sm text-label-sm text-tertiary bg-tertiary-fixed text-on-tertiary-fixed px-2 py-0.5 rounded-full font-bold" id="mismatch-pill">68% Fit</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Secondary Register &amp; Restock</h3>
+</div>
+<button aria-label="Reorder Secondary Register" class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant shrink-0 cursor-grab active:cursor-grabbing">
+<span class="material-symbols-outlined text-[18px]">drag_indicator</span>
+</button>
+</div>
+<!-- Warning Alert Banner -->
+<div class="bg-tertiary-fixed/40 p-2 rounded-lg flex items-center gap-2" id="warning-box">
+<span class="material-symbols-outlined text-tertiary text-[18px] shrink-0">warning</span>
+<p class="font-label-sm text-label-sm text-on-tertiary-fixed font-semibold leading-tight">Skill-Mismatch Warning: POS Certification Pending</p>
+</div>
+<div class="flex flex-wrap gap-1.5 pl-1">
+<span class="inline-flex items-center gap-1 bg-surface-container-low text-tertiary font-label-sm text-label-sm px-2 py-1 rounded font-semibold">
+<span class="material-symbols-outlined text-[13px] text-tertiary">pending</span> POS Certified (In Progress)
+        </span>
+<span class="inline-flex items-center gap-1 bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[13px] text-secondary">check_circle</span> Restock Safety
+        </span>
+</div>
+<div class="bg-surface-container-low p-2.5 rounded-lg flex items-center justify-between mt-0.5 pl-2">
+<div class="flex items-center gap-2.5 min-w-0">
+<img class="w-9 h-9 rounded-full object-cover shrink-0 bg-surface-container-highest" data-alt="Casual corporate portrait of Alex Miller, young warehouse apprentice and retail trainee in modern grey shirt with pleasant attentive expression" id="mismatch-avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwFzqFS267EcDzCfUJUNIWREMi7I1kNTqxIwmKlXpONyaftn6gWcNYSjTB-h3MHi42ZtOWZ7jQmlnj9TTf7RgvqUkjqrdsPqyuCcjIyH5YCUHp80nsmt9U85HikRnihbPGG5DHZ5kzeYO5QT5rsqp9-jzyCrz2ytuKfXmQ7whFBlxp3XsjEihtWWW1SRk-7a63EAAQDBArJOu7xlY46TSOWDHB5uqqk4bxwTnAtK2-4ZiGcRZOXLk"/>
+<div class="min-w-0">
+<p class="font-label-lg text-label-lg text-on-surface font-bold truncate" id="mismatch-name">Trainee Alex Miller</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant truncate" id="mismatch-role">Apprentice · Hourly $17.50</p>
+</div>
+</div>
+<button class="min-h-[36px] px-2.5 py-1 bg-tertiary-fixed text-on-tertiary-fixed hover:bg-tertiary-fixed-dim font-label-md text-label-md rounded flex items-center gap-1 transition-colors font-bold" id="btn-swap-certified" onclick="swapCertifiedStaff()">
+<span class="material-symbols-outlined text-[16px]">sync_alt</span>
+<span>Swap Certified</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Unassigned Available Standby Pool Bento Box -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">group</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">Available Standby Pool</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">3 Reserves</span>
+</div>
+<div class="space-y-2">
+<!-- Standby 1 -->
+<div class="bg-surface-container-low p-2.5 rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-2 min-w-0">
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center font-bold text-on-primary-fixed text-label-md shrink-0">
+            SN
+          </div>
+<div class="min-w-0">
+<div class="flex items-center gap-1">
+<span class="font-label-md text-label-md font-bold text-on-surface truncate">Siddharth Nair</span>
+<span class="font-label-sm text-label-sm bg-secondary-container/50 text-on-secondary-container px-1 rounded">POS Cert</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate block">Float Lead · 100% Station Match</span>
+</div>
+</div>
+<button class="text-primary hover:bg-surface-container px-2 py-1 rounded font-label-md text-label-md" onclick="directAssign('Siddharth Nair')">Assign</button>
+</div>
+<!-- Standby 2 -->
+<div class="bg-surface-container-low p-2.5 rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-2 min-w-0">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center font-bold text-on-secondary-fixed text-label-md shrink-0">
+            CO
+          </div>
+<div class="min-w-0">
+<div class="flex items-center gap-1">
+<span class="font-label-md text-label-md font-bold text-on-surface truncate">Clara Oswald</span>
+<span class="font-label-sm text-label-sm bg-surface-container-high text-on-surface-variant px-1 rounded">Food Safety</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate block">Backup Prep · 95% Kitchen Fit</span>
+</div>
+</div>
+<button class="text-primary hover:bg-surface-container px-2 py-1 rounded font-label-md text-label-md" onclick="directAssign('Clara Oswald')">Assign</button>
+</div>
+</div>
+</div>
+<!-- Evaluator Mode Drawer: Glassmorphic Modular System Component -->
+<div class="rounded-xl overflow-hidden shadow-md bg-surface-container-lowest/90 backdrop-blur-md">
+<!-- Header Collapse Bar -->
+<button class="w-full bg-surface-container p-space-md flex items-center justify-between text-left focus:outline-none" onclick="toggleEvaluatorDrawer()">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0">psychology</span>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-primary font-bold uppercase tracking-wider">Evaluator Mode: Algorithm Details</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold truncate">Branch and Bound Optimization Matrix</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] transition-transform duration-300" id="eval-chevron">expand_less</span>
+</button>
+<!-- Collapsible Content -->
+<div class="p-space-md space-y-space-md" id="evaluator-drawer-content">
+<!-- Solved Statement -->
+<div class="bg-surface-container-low p-3 rounded-lg flex flex-col gap-1.5">
+<div class="flex items-center gap-1.5 text-primary">
+<span class="material-symbols-outlined text-[16px]">account_tree</span>
+<span class="font-label-md text-label-md font-bold">Branch and Bound Exact Solver</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface leading-snug">
+          Assigned via <span class="font-bold text-on-surface">Branch and Bound</span> — 142 branches pruned, 8 optimal leaves evaluated.
+        </p>
+</div>
+<!-- Algorithmic Metric Bento Cells -->
+<div class="grid grid-cols-2 gap-2">
+<div class="bg-surface-container-high/60 p-2.5 rounded-lg flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium uppercase tracking-tight">Global Cost Bound</span>
+<span class="font-tabular-stat text-tabular-stat text-on-surface font-bold mt-0.5">18.2</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">Optimal Feasibility</span>
+</div>
+<div class="bg-surface-container-high/60 p-2.5 rounded-lg flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium uppercase tracking-tight">Search Runtime</span>
+<span class="font-tabular-stat text-tabular-stat text-on-surface font-bold mt-0.5">31ms</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Deterministic Pass</span>
+</div>
+</div>
+<!-- Heuristic Comparison Section -->
+<div class="bg-surface-container-low p-3 rounded-lg space-y-2">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface font-bold flex items-center gap-1.5 cursor-pointer" for="greedy-toggle">
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">compare_arrows</span>
+            Preview Greedy alternative
+          </label>
+<div class="relative inline-block w-10 h-6 align-middle select-none">
+<input class="sr-only" id="greedy-toggle" onchange="toggleGreedyPreview(this)" type="checkbox"/>
+<div class="block w-10 h-6 bg-surface-container-highest rounded-full transition-colors cursor-pointer" id="toggle-track"></div>
+<div class="dot absolute left-1 top-1 bg-surface-container-lowest w-4 h-4 rounded-full transition-transform cursor-pointer" id="toggle-thumb"></div>
+</div>
+</div>
+<!-- Greedy Comparison Description Box -->
+<div class="hidden bg-surface-container-lowest p-2.5 rounded text-on-surface transition-all" id="greedy-details">
+<div class="flex items-center gap-1 text-tertiary mb-1">
+<span class="material-symbols-outlined text-[15px]">info</span>
+<span class="font-label-sm text-label-sm font-bold uppercase">Greedy Heuristic Simulated Output</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+<span class="font-bold text-on-surface">Greedy</span> heuristic assigns first available candidate, yielding <span class="font-bold text-error">79.1% aggregate fit score</span> with 2 skill mismatches, <span class="font-bold text-error">13.3% lower efficiency</span>.
+          </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  function toggleEvaluatorDrawer() {
+    const drawer = document.getElementById('evaluator-drawer-content');
+    const chevron = document.getElementById('eval-chevron');
+    if (drawer.classList.contains('hidden')) {
+      drawer.classList.remove('hidden');
+      chevron.style.transform = 'rotate(0deg)';
+    } else {
+      drawer.classList.add('hidden');
+      chevron.style.transform = 'rotate(180deg)';
+    }
+  }
+
+  function toggleGreedyPreview(checkbox) {
+    const details = document.getElementById('greedy-details');
+    const track = document.getElementById('toggle-track');
+    const thumb = document.getElementById('toggle-thumb');
+    const avgFit = document.getElementById('metric-avg-fit');
+
+    if (checkbox.checked) {
+      details.classList.remove('hidden');
+      track.classList.remove('bg-surface-container-highest');
+      track.classList.add('bg-primary');
+      thumb.style.transform = 'translateX(16px)';
+      avgFit.innerText = '79.1%';
+      avgFit.classList.remove('text-secondary');
+      avgFit.classList.add('text-tertiary');
+      showToast('Simulating: Greedy heuristic alternative projection');
+    } else {
+      details.classList.add('hidden');
+      track.classList.add('bg-surface-container-highest');
+      track.classList.remove('bg-primary');
+      thumb.style.transform = 'translateX(0px)';
+      avgFit.innerText = '92.4%';
+      avgFit.classList.add('text-secondary');
+      avgFit.classList.remove('text-tertiary');
+      showToast('Restored: Optimal Branch and Bound assignment matrix');
+    }
+  }
+
+  function swapCertifiedStaff() {
+    const nameEl = document.getElementById('mismatch-name');
+    const roleEl = document.getElementById('mismatch-role');
+    const pill = document.getElementById('mismatch-pill');
+    const bar = document.getElementById('mismatch-indicator');
+    const warning = document.getElementById('warning-box');
+    const btn = document.getElementById('btn-swap-certified');
+    const avgFit = document.getElementById('metric-avg-fit');
+
+    // Instant swap micro-interaction
+    nameEl.innerText = 'Siddharth Nair';
+    roleEl.innerText = 'Float Lead (Certified) · Hourly $23.50';
+    pill.innerText = '99% Fit';
+    pill.className = 'font-label-sm text-label-sm text-secondary bg-secondary-container/40 text-on-secondary-container px-2 py-0.5 rounded-full font-bold';
+    bar.className = 'absolute left-0 top-0 bottom-0 w-1.5 bg-secondary';
+    warning.className = 'bg-secondary-container/30 p-2 rounded-lg flex items-center gap-2';
+    warning.innerHTML = '<span class="material-symbols-outlined text-secondary text-[18px] shrink-0">check_circle</span><p class="font-label-sm text-label-sm text-on-secondary-container font-semibold leading-tight">Skill Certified: 100% Station Compliance Achieved</p>';
+    btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">verified</span><span>Assigned</span>';
+    btn.className = 'min-h-[36px] px-2.5 py-1 bg-surface-container text-on-surface-variant font-label-md text-label-md rounded flex items-center gap-1 font-bold pointer-events-none';
+    avgFit.innerText = '96.2%';
+
+    showToast('Swapped Trainee Alex Miller with Siddharth Nair (POS Certified)');
+  }
+
+  function runAutoAssign() {
+    const btn = document.getElementById('btn-auto-assign');
+    btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span><span>OPTIMIZING GRAPH...</span>';
+    setTimeout(function() {
+      btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">done_all</span><span>ASSIGNMENTS SYNCHRONIZED</span>';
+      btn.classList.remove('bg-primary-container');
+      btn.classList.add('bg-secondary');
+      swapCertifiedStaff();
+      showToast('Branch and Bound: 4/4 stations locked at minimal global cost');
+    }, 450);
+  }
+
+  function promptSwap(name, station) {
+    showToast('Select replacement candidate for ' + station);
+  }
+
+  function directAssign(name) {
+    showToast('Assigning ' + name + ' to prioritized open shift capacity');
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('status-toast');
+    const msgEl = document.getElementById('toast-message');
+    msgEl.innerText = msg;
+    toast.classList.remove('hidden');
+  }
+
+  function dismissToast() {
+    document.getElementById('status-toast').classList.add('hidden');
+  }
+</script></main><div class="fixed bottom-16 inset-x-0 z-40 px-gutter pb-2 pointer-events-none"><div class="pointer-events-auto mx-auto max-w-md bg-surface-container-lowest/85 backdrop-blur-xl rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.08)] p-space-sm flex items-center justify-between"><div class="flex items-center gap-space-sm"><span class="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span><div class="flex flex-col"><span class="font-label-sm text-label-sm text-on-surface font-bold tracking-tight uppercase">Evaluator Engine</span><span class="font-label-sm text-label-sm text-on-surface-variant">Simulated Pass · 98.4% Fit</span></div></div><button class="min-h-[44px] px-space-md py-space-xs bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary-container transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">tune</span><span>Audit</span></button></div></div><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-primary font-label-md font-bold"><div class="h-16 flex items-center justify-around px-space-xs"><a class="flex-1 min-h-[44px] flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="weekly-roster" href="#"><span class="material-symbols-outlined text-[20px]">calendar_view_week</span><span class="font-label-sm text-label-sm leading-tight">Roster</span></a><a class="flex-1 min-h-[44px] flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="budget-and-overtime" href="#"><span class="material-symbols-outlined text-[20px]">payments</span><span class="font-label-sm text-label-sm leading-tight">Budget</span></a><a aria-current="page" class="flex-1 min-h-[44px] flex flex-col items-center justify-center gap-0.5 transition-colors text-primary font-label-md font-bold" data-path="station-assignment" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-label-sm text-label-sm leading-tight">Stations</span></a><a class="flex-1 min-h-[44px] flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="employee-and-shift-search" href="#"><span class="material-symbols-outlined text-[20px]">badge</span><span class="font-label-sm text-label-sm leading-tight">Directory</span></a><a class="flex-1 min-h-[44px] flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="demand-forecasting" href="#"><span class="material-symbols-outlined text-[20px]">trending_up</span><span class="font-label-sm text-label-sm leading-tight">Forecast</span></a></div></nav></body></html>
