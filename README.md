@@ -12,10 +12,11 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4.0-38bdf8?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![Zustand](https://img.shields.io/badge/State-Zustand-764abc?style=for-the-badge)](https://github.com/pmndrs/zustand)
 [![Supabase](https://img.shields.io/badge/Database-Supabase%20Postgres-3ecf8e?style=for-the-badge&logo=supabase)](https://supabase.com/)
+[![Vercel Deployment](https://img.shields.io/badge/Live%20Demo-roastergen.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://roastergen.vercel.app/)
 
 <br />
 
-[📖 Architecture](#7-system-architecture) • [🧠 Algorithm Suite](#5-algorithm-suite) • [📊 Complexity Table](#10-algorithm-complexity) • [⚡ Evaluator Telemetry](#11-evaluator--telemetry) • [📸 Screenshots](#12-screenshots) • [🚀 Quickstart](#14-installation)
+[🌐 **Live Demo Application**](https://roastergen.vercel.app/) • [📖 Architecture](#7-system-architecture) • [🧠 Algorithm Suite](#5-algorithm-suite) • [📊 Complexity Table](#10-algorithm-complexity) • [⚡ Evaluator Telemetry](#11-evaluator--telemetry) • [📸 Screenshots](#12-screenshots) • [🚀 Quickstart](#14-installation)
 
 ---
 
@@ -466,6 +467,12 @@ ROASTER-Gen/
 ---
 
 ## 14. Installation
+
+### 🌐 Live Production Deployment
+The production-ready application is deployed live on Vercel:  
+👉 **[https://roastergen.vercel.app/](https://roastergen.vercel.app/)**
+
+---
 
 ### Prerequisites
 Verify that Node.js and npm are installed on your system:
