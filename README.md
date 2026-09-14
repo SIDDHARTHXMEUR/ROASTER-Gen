@@ -18,11 +18,9 @@
 
 [🌐 **Live Demo Application**](https://roastergen.vercel.app/) • [📖 Architecture](#7-system-architecture) • [🧠 Algorithm Suite](#5-algorithm-suite) • [📊 Complexity Table](#10-algorithm-complexity) • [⚡ Evaluator Telemetry](#11-evaluator--telemetry) • [📸 Screenshots](#12-screenshots) • [🚀 Quickstart](#14-installation)
 
----
-
-![RosterGen Enterprise Banner](./screenshots/rostergen_5_screenshots_combined.png)
-
 </div>
+
+---
 
 ---
 
