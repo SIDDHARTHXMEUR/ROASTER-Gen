@@ -128,15 +128,17 @@ RosterGen maps each core operational challenge to a dedicated algorithmic strate
 
 ## 4. Core Features
 
-| Module | Purpose | Implemented Algorithm |
+| Module | Purpose | Implemented Algorithm & Architecture |
 | :--- | :--- | :--- |
-| **Weekly Roster (`/`)** | Constraint-aware workforce shift scheduling | Backtracking + AC-3 Arc Consistency |
-| **Budget & Overtime (`/budget`)** | Overtime approval optimization under budget caps | 0/1 Knapsack Dynamic Programming |
+| **Weekly Roster (`/`)** | Corporate shift scheduling (**09:00–19:00 Core** + **19:00–23:00 OT**) | Backtracking + AC-3 Arc Consistency |
+| **Budget & Overtime (`/budget`)** | Overtime approval optimization with interactive Cap Controller (`₹2.5L`–`₹10L` presets) | 0/1 Knapsack Dynamic Programming vs Greedy |
 | **Station Matching (`/stations`)** | Workstation pod assignment & skill fit | Branch and Bound Tree Pruning |
 | **Personnel Directory (`/search`)** | Rapid employee & skill substring search | Knuth-Morris-Pratt (KMP) Matcher |
-| **Directory Sorting (`/search`)** | Personnel salary & hour ordering | Merge Sort vs Quick Sort |
+| **Directory Sorting (`/search`)** | Personnel wage & scheduled hour ordering | Merge Sort vs Quick Sort |
 | **Demand Forecast (`/forecast`)** | Call-out risk & capacity shortfall modeling | Monte Carlo Stochastic Simulation Engine |
-| **Evaluator Telemetry** | Real-time algorithm performance measurement | Web Microsecond Instrumentation |
+| **Sliding Navigation Sidebar** | Collapsible desktop/mobile drawer layout | Framer Motion Spring Animations |
+| **Evaluator Telemetry** | Microsecond execution latency and operation counting | Web Microsecond Instrumentation (`performance.now()`) |
+| **Enterprise Persistence** | PostgreSQL storage with Supervisor/Evaluator RLS | Supabase RLS Policies & Atomic RPCs |
 
 ---
 
