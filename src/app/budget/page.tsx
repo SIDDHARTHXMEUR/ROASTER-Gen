@@ -110,11 +110,35 @@ export default function BudgetPlanner() {
   };
 
   useEffect(() => {
-    if (!algoResult && !isOptimizing && overtimeRequests.length > 0) {
-      handleOptimize();
+    const storeState = useAppStore.getState();
+    const ots = storeState.overtimeRequests.length > 0 ? storeState.overtimeRequests : overtimeRequests;
+    const emps = storeState.employees.length > 0 ? storeState.employees : employees;
+    const sfts = storeState.shifts.length > 0 ? storeState.shifts : shifts;
+
+    if (ots.length > 0) {
+      const algoCap = Math.floor(budgetCap / 40);
+      const runAlgo = useGreedy ? approveOvertimeGreedy : approveOvertimeKnapsack;
+      const res = runAlgo(ots.slice(0, 15), algoCap);
+      setAlgoResult(res);
+      const enriched = res.result.map(r => {
+        const emp = emps.find(e => e.id === r.employeeId);
+        const shift = sfts.find(s => s.id === r.shiftId);
+        return {
+          ...r,
+          costINR: r.cost * 40,
+          density: parseFloat((r.priorityScore / (r.cost * 40) * 1000).toFixed(3)),
+          empName: emp?.name ?? r.employeeId,
+          empDept: emp?.department ?? 'Engineering & Cloud',
+          empRole: emp?.role ?? 'Engineer',
+          shiftDay: shift?.day ?? 'Monday',
+          shiftTier: shift?.tier ?? 'Evening',
+          skillRequired: shift?.requiredSkills?.[0] ?? 'Incident Triage',
+        };
+      });
+      setSolverRequests(enriched);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [overtimeRequests]);
+  }, [overtimeRequests.length, budgetCap, useGreedy]);
 
   const toggleApproval = (id: string) => {
     const current = displayRequests.find(r => r.id === id);
@@ -161,40 +185,132 @@ export default function BudgetPlanner() {
                 Greedy
               </button>
             </div>
-            <button type="button" onClick={handleOptimize} disabled={isOptimizing || overtimeRequests.length === 0}
-              className="btn-primary rounded-lg px-4 py-2 text-xs font-medium flex items-center gap-2 cursor-pointer disabled:opacity-50">
-              <RotateCw className={clsx('w-3.5 h-3.5', isOptimizing && 'animate-spin')} />
-              <span>{isOptimizing ? 'Optimizing...' : 'Run Optimizer'}</span>
-            </button>
           </div>
         </div>
       </section>
 
       <div className="p-8 flex flex-col gap-6">
-        {/* Budget Cap Slider */}
-        <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <SlidersHorizontal className="w-4 h-4 text-amber-600" />
-              <span className="text-sm font-semibold text-slate-900">Weekly Overtime Budget Cap</span>
+        {/* Enhanced Interactive Budget Cap Controller */}
+        <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-sm relative overflow-hidden">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 border border-amber-500/20 shadow-2xs">
+                <SlidersHorizontal className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-slate-900 tracking-tight">Weekly Overtime Budget Cap</h3>
+                  <span className={clsx(
+                    "px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide border",
+                    budgetSummary.utilizationPct > 100 ? "bg-rose-50 text-rose-700 border-rose-200" :
+                    budgetSummary.utilizationPct > 85 ? "bg-amber-50 text-amber-700 border-amber-200" :
+                    "bg-emerald-50 text-emerald-700 border-emerald-200"
+                  )}>
+                    {budgetSummary.utilizationPct > 100 ? "Cap Exceeded" :
+                     budgetSummary.utilizationPct > 85 ? "Near Capacity" : "Optimal Pool"}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Adjust maximum allowable overtime expenditure limit to trigger 0-1 Knapsack redistribution.
+                </p>
+              </div>
             </div>
-            <span className="text-lg font-bold text-amber-700 font-mono-nums">₹{budgetCap.toLocaleString('en-IN')}</span>
+
+            {/* Value Stepper Control */}
+            <div className="flex items-center gap-2 self-start md:self-auto bg-slate-50 p-1.5 rounded-xl border border-slate-200">
+              <button
+                type="button"
+                onClick={() => setBudgetCap(Math.max(50000, budgetCap - 25000))}
+                className="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all shadow-2xs cursor-pointer"
+                title="Decrease by ₹25,000"
+              >
+                -₹25k
+              </button>
+              <div className="px-3 text-base font-bold text-amber-700 font-mono-nums tracking-tight">
+                ₹{budgetCap.toLocaleString('en-IN')}
+              </div>
+              <button
+                type="button"
+                onClick={() => setBudgetCap(Math.min(1000000, budgetCap + 25000))}
+                className="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all shadow-2xs cursor-pointer"
+                title="Increase by ₹25,000"
+              >
+                +₹25k
+              </button>
+            </div>
           </div>
-          <input
-            type="range"
-            min={50000}
-            max={1000000}
-            step={10000}
-            value={budgetCap}
-            onChange={e => setBudgetCap(Number(e.target.value))}
-            className="w-full h-2 bg-slate-200 rounded-full appearance-none cursor-pointer accent-amber-600"
-          />
-          <div className="flex justify-between text-[11px] text-slate-400 font-mono-nums mt-1.5">
-            <span>₹50,000</span>
-            <span className="text-amber-600 font-semibold">
-              {budgetSummary.utilizationPct.toFixed(1)}% utilized · ₹{Math.max(0, budgetCap - budgetSummary.totalCost).toLocaleString('en-IN')} remaining
-            </span>
-            <span>₹10,00,000</span>
+
+          {/* Slider & Presets Strip */}
+          <div className="pt-5 space-y-4">
+            {/* Custom Dual-Layer Gradient Track Slider */}
+            <div className="space-y-2">
+              <input
+                type="range"
+                min={50000}
+                max={1000000}
+                step={10000}
+                value={budgetCap}
+                onChange={e => setBudgetCap(Number(e.target.value))}
+                style={{
+                  background: `linear-gradient(to right, #d97706 0%, #f59e0b ${((budgetCap - 50000) / 950000) * 100}%, #e2e8f0 ${((budgetCap - 50000) / 950000) * 100}%, #e2e8f0 100%)`
+                }}
+                className="w-full h-2.5 rounded-full appearance-none cursor-pointer accent-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+              />
+              <div className="flex justify-between text-xs text-slate-500 font-mono-nums font-medium px-0.5">
+                <span>Min: ₹50,000</span>
+                <span className="text-slate-400">Current Cap: ₹{budgetCap.toLocaleString('en-IN')}</span>
+                <span>Max: ₹10,00,000</span>
+              </div>
+            </div>
+
+            {/* Quick Presets & Utilization Metrics */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mr-1">Presets:</span>
+                {[
+                  { label: '₹2.5L', val: 250000 },
+                  { label: '₹4.5L', val: 450000 },
+                  { label: '₹6.5L', val: 650000 },
+                  { label: '₹8.5L', val: 850000 },
+                  { label: '₹10L',  val: 1000000 },
+                ].map((preset) => (
+                  <button
+                    key={preset.val}
+                    type="button"
+                    onClick={() => setBudgetCap(preset.val)}
+                    className={clsx(
+                      "px-2.5 py-1 rounded-md text-xs font-semibold font-mono-nums transition-all cursor-pointer border",
+                      budgetCap === preset.val
+                        ? "bg-amber-600 text-white border-amber-600 shadow-xs"
+                        : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-slate-900"
+                    )}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Realtime Metrics Summary */}
+              <div className="flex items-center gap-3 text-xs font-mono-nums font-semibold">
+                <div className="flex items-center gap-1 text-slate-600">
+                  <span className="text-slate-400 font-normal">Allocated:</span>
+                  <span className="text-slate-900 font-bold">₹{budgetSummary.totalCost.toLocaleString('en-IN')}</span>
+                </div>
+                <span className="text-slate-300">·</span>
+                <div className="flex items-center gap-1 text-emerald-700">
+                  <span className="text-slate-400 font-normal">Available:</span>
+                  <span className="font-bold">₹{Math.max(0, budgetCap - budgetSummary.totalCost).toLocaleString('en-IN')}</span>
+                </div>
+                <span className="text-slate-300">·</span>
+                <div className={clsx(
+                  "px-2 py-0.5 rounded font-bold",
+                  budgetSummary.utilizationPct > 100 ? "bg-rose-100 text-rose-800" :
+                  budgetSummary.utilizationPct > 85 ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-800"
+                )}>
+                  {budgetSummary.utilizationPct.toFixed(1)}% Used
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -392,7 +508,19 @@ export default function BudgetPlanner() {
           </div>
         </div>
       </div>
-      <EvaluatorDrawer />
+      <EvaluatorDrawer 
+        algorithmName={useGreedy ? 'Greedy Density Ratio Solver' : '0/1 Dynamic Programming Knapsack'}
+        runtimeMs={algoResult ? algoResult.runtimeMs : 1.25}
+        comparisons={algoResult ? (algoResult.metaInfo?.statesEvaluated || 675) : 675}
+        metaInfo={{ 
+          capacity: budgetCap, 
+          requestsCount: enrichedRequests.length,
+          approved: budgetSummary.approved
+        }}
+        isAlternateActive={useGreedy}
+        onToggleAlternate={() => { setUseGreedy(!useGreedy); }}
+        alternateLabel="Greedy Heuristic"
+      />
     </div>
   );
 }

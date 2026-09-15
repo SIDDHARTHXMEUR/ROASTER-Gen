@@ -3,13 +3,16 @@ import { Employee, Shift, Assignment, Station, OvertimeRequest, ShiftSwapRequest
 import { fetchFullRosterDataset, syncAssignmentsToSupabase, seedSupabaseDatabase } from '@/lib/supabase/services';
 import { isSupabaseConfigured } from '@/lib/supabase/client';
 
-export type Role = 'Manager' | 'Employee' | 'Owner' | 'Evaluator' | 'Recruiter';
+export type Role = 'Supervisor' | 'Evaluator';
 
 interface AppState {
   role: Role;
   setRole: (role: Role) => void;
   isEvaluatorDrawerOpen: boolean;
   setEvaluatorDrawerOpen: (open: boolean) => void;
+  isSidebarOpen: boolean;
+  setSidebarOpen: (open: boolean) => void;
+  toggleSidebar: () => void;
   
   // Data state
   employees: Employee[];
@@ -44,10 +47,13 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
-  role: 'Manager',
+  role: 'Supervisor',
   setRole: (role) => set({ role }),
   isEvaluatorDrawerOpen: false,
   setEvaluatorDrawerOpen: (isEvaluatorDrawerOpen) => set({ isEvaluatorDrawerOpen }),
+  isSidebarOpen: true,
+  setSidebarOpen: (isSidebarOpen) => set({ isSidebarOpen }),
+  toggleSidebar: () => set((s) => ({ isSidebarOpen: !s.isSidebarOpen })),
   
   employees: [],
   shifts: [],

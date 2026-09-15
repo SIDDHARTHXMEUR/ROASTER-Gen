@@ -24,6 +24,7 @@ export default function ForecastPage() {
   const [trialsCount, setTrialsCount] = useState<number>(0);
   const [algoResult, setAlgoResult] = useState<AlgorithmResult<MonteCarloResult> | null>(null);
   const [isSimulating, setIsSimulating] = useState(false);
+  const [liveRuntime, setLiveRuntime] = useState<number>(0);
   const [hoveredDayIndex, setHoveredDayIndex] = useState<number | null>(4);
   const [hasAuthorizedStandby, setHasAuthorizedStandby] = useState(false);
   
@@ -43,15 +44,30 @@ export default function ForecastPage() {
     return map;
   }, [shifts]);
 
+  const currentWeekFormattedDates = useMemo(() => {
+    const base = new Date();
+    const dayOfWeek = base.getDay();
+    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    base.setDate(base.getDate() + diff);
+    return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d, i) => {
+      const dateObj = new Date(base);
+      dateObj.setDate(base.getDate() + i);
+      return {
+        day: d,
+        date: dateObj.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })
+      };
+    });
+  }, []);
+
   const forecastDays: DayForecastItem[] = useMemo(() => {
     const baseDays = [
-      { day: 'Mon', date: 'May 21', prob: 4.1, mean: 82.1, def: 0, stat: 'Nominal' as const, peak: 'Morning (06:00)', strain: 68 },
-      { day: 'Tue', date: 'May 22', prob: 4.0, mean: 83.4, def: 0, stat: 'Nominal' as const, peak: 'Mid-Day (10:00)', strain: 71 },
-      { day: 'Wed', date: 'May 23', prob: 3.8, mean: 80.2, def: 0, stat: 'Nominal' as const, peak: 'Mid-Day (11:30)', strain: 65 },
-      { day: 'Thu', date: 'May 24', prob: 4.6, mean: 86.1, def: 1, stat: 'Elevated' as const, peak: 'Evening (14:00)', strain: 78 },
-      { day: 'Fri', date: 'May 25', prob: 28.4, mean: 98.4, def: 2, stat: 'Critical' as const, peak: 'Evening (19:30)', strain: 92 },
-      { day: 'Sat', date: 'May 26', prob: 11.2, mean: 90.1, def: 1, stat: 'Elevated' as const, peak: 'Night (22:00)', strain: 81 },
-      { day: 'Sun', date: 'May 27', prob: 5.2, mean: 84.2, def: 0, stat: 'Nominal' as const, peak: 'Evening (17:00)', strain: 69 },
+      { day: 'Mon', date: currentWeekFormattedDates[0].date, prob: 4.1, mean: 82.1, def: 0, stat: 'Nominal' as const, peak: 'Corporate Core (09:00)', strain: 68 },
+      { day: 'Tue', date: currentWeekFormattedDates[1].date, prob: 4.0, mean: 83.4, def: 0, stat: 'Nominal' as const, peak: 'Staggered Core (10:00)', strain: 71 },
+      { day: 'Wed', date: currentWeekFormattedDates[2].date, prob: 3.8, mean: 80.2, def: 0, stat: 'Nominal' as const, peak: 'Corporate Core (11:30)', strain: 65 },
+      { day: 'Thu', date: currentWeekFormattedDates[3].date, prob: 4.6, mean: 86.1, def: 1, stat: 'Elevated' as const, peak: 'Post-Work Overtime (19:00)', strain: 78 },
+      { day: 'Fri', date: currentWeekFormattedDates[4].date, prob: 28.4, mean: 98.4, def: 2, stat: 'Critical' as const, peak: 'Post-Work Overtime (19:30)', strain: 92 },
+      { day: 'Sat', date: currentWeekFormattedDates[5].date, prob: 11.2, mean: 90.1, def: 1, stat: 'Elevated' as const, peak: 'Emergency Standby (23:00)', strain: 81 },
+      { day: 'Sun', date: currentWeekFormattedDates[6].date, prob: 5.2, mean: 84.2, def: 0, stat: 'Nominal' as const, peak: 'Post-Work Overtime (19:00)', strain: 69 },
     ];
 
     if (algoResult) {
@@ -59,12 +75,12 @@ export default function ForecastPage() {
       const baseFriProb = Math.min(res.overallShortfallProbability * 100, 99);
       const modBaseDays = [...baseDays];
       modBaseDays[4] = {
-        day: 'Fri', date: 'May 25',
+        day: 'Fri', date: currentWeekFormattedDates[4].date,
         prob: hasAuthorizedStandby ? 4.2 : Number(baseFriProb.toFixed(1)),
         mean: res.totalExpectedDemand,
         def: hasAuthorizedStandby ? 0 : Math.max(1, Math.floor(res.maxExpectedShortfall)),
         stat: hasAuthorizedStandby ? 'Nominal' : baseFriProb > 20 ? 'Critical' : 'Elevated',
-        peak: 'Evening (19:30)',
+        peak: 'Post-Work Overtime (19:30)',
         strain: hasAuthorizedStandby ? 72 : Math.min(99, Math.floor(res.totalExpectedDemand * 0.9)),
       };
       return modBaseDays.map(d => ({
@@ -82,15 +98,17 @@ export default function ForecastPage() {
       peakShift: d.peak,
       strain: d.day === 'Fri' && hasAuthorizedStandby ? 72 : d.strain
     }));
-  }, [algoResult, hasAuthorizedStandby]);
+  }, [algoResult, hasAuthorizedStandby, currentWeekFormattedDates]);
 
   const triggerMonteCarlo = () => {
     setIsSimulating(true);
     setHasAuthorizedStandby(false);
     let count = 0;
+    const start = performance.now();
     const interval = setInterval(() => {
       count += 2000;
       setTrialsCount(count);
+      setLiveRuntime(performance.now() - start);
       if (count >= 10000) {
         clearInterval(interval);
         const result = simulateDemandMonteCarlo(shiftAssignmentsMap, requiredHeadcountsMap, 10000);
@@ -107,8 +125,10 @@ export default function ForecastPage() {
   };
 
   useEffect(() => {
-    if (!algoResult && !isSimulating) {
-      triggerMonteCarlo();
+    if (!algoResult) {
+      const res = simulateDemandMonteCarlo(shiftAssignmentsMap, requiredHeadcountsMap, 10000);
+      setAlgoResult(res);
+      setTrialsCount(10000);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -151,11 +171,6 @@ export default function ForecastPage() {
               4-Week Proj
             </button>
           </div>
-          <button type="button" onClick={triggerMonteCarlo} disabled={isSimulating}
-            className="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium shadow-xs transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50">
-            <RotateCw className={clsx('w-3.5 h-3.5', isSimulating && 'animate-spin')} />
-            <span>{isSimulating ? `Simulating (${trialsCount})...` : 'Run Monte Carlo'}</span>
-          </button>
         </div>
       </div>
 
@@ -205,24 +220,23 @@ export default function ForecastPage() {
             </div>
           </div>
 
-          <div className="metric-card p-5 stagger-3 border-slate-200 shadow-sm relative overflow-hidden bg-slate-900 text-white group">
-            <div className="absolute -right-6 -top-6 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
-            <div className="flex justify-between items-center text-xs font-medium text-slate-400 relative z-10">
+          <div className="metric-card accent-blue p-5 stagger-3">
+            <div className="flex justify-between items-center text-xs font-medium text-slate-500">
               <span>Algorithm Telemetry</span>
-              <span className="text-emerald-400 font-semibold font-mono-nums flex items-center gap-1">
-                <Zap className="w-3 h-3" /> Live
+              <span className="text-emerald-600 font-semibold font-mono-nums flex items-center gap-1">
+                <Zap className="w-3.5 h-3.5 text-emerald-500" /> Live
               </span>
             </div>
-            <div className="mt-3 relative z-10">
+            <div className="mt-3">
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-bold tracking-tight font-mono-nums">
-                  {algoResult ? algoResult.runtimeMs.toFixed(2) : '18.40'}
+                <span className="text-3xl font-bold tracking-tight text-slate-900 font-mono-nums">
+                  {algoResult ? algoResult.runtimeMs.toFixed(2) : liveRuntime.toFixed(2)}
                 </span>
-                <span className="text-sm font-medium text-slate-500">ms</span>
+                <span className="text-sm font-medium text-slate-400">ms</span>
               </div>
-              <div className="flex justify-between items-center mt-3 text-xs">
-                <span className="text-slate-400 font-medium">{algoResult ? '10,000' : '10,000'} iterations</span>
-                <span className="font-semibold text-slate-300">Stochastic DP Engine</span>
+              <div className="flex justify-between items-center mt-3 text-xs text-slate-500">
+                <span className="font-medium">{algoResult ? '10,000' : trialsCount} iterations</span>
+                <span className="font-semibold text-slate-700">Stochastic DP Engine</span>
               </div>
             </div>
           </div>
@@ -416,7 +430,15 @@ export default function ForecastPage() {
           </table>
         </div>
       </div>
-      <EvaluatorDrawer />
+      <EvaluatorDrawer 
+        algorithmName="Monte Carlo Empirical Stochastic Engine"
+        runtimeMs={algoResult ? algoResult.runtimeMs : liveRuntime}
+        comparisons={algoResult ? (algoResult.metaInfo?.trials || 10000) : trialsCount}
+        metaInfo={{ 
+          trials: algoResult ? (algoResult.metaInfo?.trials || 10000) : trialsCount, 
+          model: 1 
+        }}
+      />
     </motion.div>
   );
 }

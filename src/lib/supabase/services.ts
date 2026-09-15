@@ -106,10 +106,33 @@ function mapDbSwap(row: any): ShiftSwapRequest {
 // SUPABASE DATA API SERVICES
 // ==========================================================
 
+import { assignShiftsBacktracking } from '../algorithms/backtracking';
+import { approveOvertimeKnapsack } from '../algorithms/knapsack';
+
+function getDefaultSeedDataset() {
+  const dataset = generateDataset(42);
+  const backtrackResult = assignShiftsBacktracking(dataset.employees, dataset.shifts);
+  let assignments = backtrackResult.result;
+  const friEveningShift = dataset.shifts.find(s => s.day === 'Friday' && s.tier === 'Evening');
+  if (friEveningShift) {
+    const idx = assignments.findIndex(a => a.shiftId === friEveningShift.id);
+    if (idx !== -1) {
+      assignments = assignments.filter((_, i) => i !== idx);
+    }
+  }
+  const otResult = approveOvertimeKnapsack(dataset.overtimeRequests.slice(0, 15), 11250);
+  const overtimeRequests = otResult.result;
+  return {
+    ...dataset,
+    assignments,
+    overtimeRequests,
+  };
+}
+
 export async function fetchFullRosterDataset() {
   if (!isSupabaseConfigured()) {
     console.warn('[Supabase] Missing NEXT_PUBLIC_SUPABASE_ANON_KEY. Falling back to local seed data.');
-    return { isFromSupabase: false, data: { ...generateDataset(42), assignments: [] } };
+    return { isFromSupabase: false, data: getDefaultSeedDataset() };
   }
 
   try {
@@ -124,19 +147,28 @@ export async function fetchFullRosterDataset() {
 
     if (empRes.error || shiftRes.error) {
       console.warn('[Supabase] Table query error:', empRes.error || shiftRes.error);
-      return { isFromSupabase: false, data: { ...generateDataset(42), assignments: [] } };
+      return { isFromSupabase: false, data: getDefaultSeedDataset() };
     }
 
     const employees = (empRes.data || []).map(mapDbEmployee);
     const shifts = (shiftRes.data || []).map(mapDbShift);
-    const assignments = (assignRes.data || []).map(mapDbAssignment);
+    let assignments = (assignRes.data || []).map(mapDbAssignment);
     const stations = (stationRes.data || []).map(mapDbStation);
-    const overtimeRequests = (otRes.data || []).map(mapDbOvertime);
+    let overtimeRequests = (otRes.data || []).map(mapDbOvertime);
     const shiftSwapRequests = (swapRes.data || []).map(mapDbSwap);
 
     // If database is currently empty, return local seed for initial population
     if (employees.length === 0 || shifts.length === 0) {
-      return { isFromSupabase: false, data: { ...generateDataset(42), assignments: [] }, isEmptyDb: true };
+      return { isFromSupabase: false, data: getDefaultSeedDataset(), isEmptyDb: true };
+    }
+
+    // Fallback to algorithmic defaults if DB tables are empty for assignments or overtime
+    const defaultData = getDefaultSeedDataset();
+    if (assignments.length === 0) {
+      assignments = defaultData.assignments;
+    }
+    if (overtimeRequests.length === 0) {
+      overtimeRequests = defaultData.overtimeRequests;
     }
 
     return {
@@ -152,7 +184,7 @@ export async function fetchFullRosterDataset() {
     };
   } catch (err) {
     console.error('[Supabase] Fetch error:', err);
-    return { isFromSupabase: false, data: { ...generateDataset(42), assignments: [] } };
+    return { isFromSupabase: false, data: getDefaultSeedDataset() };
   }
 }
 
@@ -206,20 +238,19 @@ export async function seedSupabaseDatabase() {
 }
 
 /**
- * Save roster assignments to Supabase
+ * Save roster assignments to Supabase using safe RPC atomic transaction
  */
 export async function syncAssignmentsToSupabase(assignments: Assignment[]) {
   if (!isSupabaseConfigured()) return false;
   try {
-    // Delete existing assignments and insert fresh
-    await supabase.from('assignments').delete().neq('shift_id', '___');
-    if (assignments.length > 0) {
-      const dbRows = assignments.map((a) => ({
-        shift_id: a.shiftId,
-        employee_id: a.employeeId,
-      }));
-      const { error } = await supabase.from('assignments').insert(dbRows);
-      if (error) console.error('[Supabase] Assignments insert error:', error);
+    const dbRows = assignments.map((a) => ({
+      shift_id: a.shiftId,
+      employee_id: a.employeeId,
+    }));
+    const { error } = await supabase.rpc('sync_roster_assignments', { new_assignments: dbRows });
+    if (error) {
+      console.error('[Supabase] Assignments sync RPC error:', error);
+      return false;
     }
     return true;
   } catch (err) {

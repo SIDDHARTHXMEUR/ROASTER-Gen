@@ -130,8 +130,8 @@ export function generateDataset(seed: number = 42) {
       name: `${FIRST_NAMES[i % FIRST_NAMES.length]} ${LAST_NAMES[(i * 3) % LAST_NAMES.length]}`,
       role,
       department,
-      hourlyWage: rng.nextInt(65, 185), 
-      maxWeeklyHours: rng.choice([40, 45, 48]),
+      hourlyWage: rng.nextInt(85, 220), 
+      maxWeeklyHours: rng.choice([50, 55, 60]),
       assignedHours: 0,
       skills: employeeSkills,
       availability
@@ -178,12 +178,15 @@ export function generateDataset(seed: number = 42) {
   for (let i = 1; i <= 60; i++) {
     const emp = employees[i % employees.length];
     const shift = shifts[(i * 3) % shifts.length];
+    // Overtime shift duration = 4h; hourly cost = emp.hourlyWage * 1.5 OT rate multiplier
+    const otRate = Math.round(emp.hourlyWage * 1.5);
+    const otCostUnit = otRate * 4; // cost unit for 4h overtime shift
     overtimeRequests.push({
       id: `OT-${i.toString().padStart(3, '0')}`,
       employeeId: emp.id,
       shiftId: shift.id,
-      cost: rng.nextInt(60, 220),
-      priorityScore: rng.nextInt(40, 99),
+      cost: otCostUnit,
+      priorityScore: rng.nextInt(45, 98),
       approved: false
     });
   }

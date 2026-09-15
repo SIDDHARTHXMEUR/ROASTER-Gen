@@ -28,7 +28,7 @@ export default function EvaluatorDrawer({
   alternateLabel = 'Naive Comparison',
   customControls
 }: EvaluatorDrawerProps) {
-  const { role, isEvaluatorDrawerOpen, setEvaluatorDrawerOpen } = useAppStore();
+  const { role, isEvaluatorDrawerOpen, setEvaluatorDrawerOpen, isSidebarOpen } = useAppStore();
   const pathname = usePathname();
 
   // Compute default active algorithm description from pathname if not explicitly passed
@@ -52,7 +52,10 @@ export default function EvaluatorDrawer({
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 80, opacity: 0 }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="fixed bottom-0 left-0 md:left-72 right-0 z-50 px-4 md:px-8 pb-4 pointer-events-none"
+        className={clsx(
+          "fixed bottom-0 right-0 z-50 px-4 md:px-8 pb-4 pointer-events-none transition-all duration-300 ease-in-out",
+          isSidebarOpen ? "left-0 md:left-72" : "left-0"
+        )}
       >
         <div className="pointer-events-auto max-w-[1300px] mx-auto rounded-none bg-white/95 backdrop-blur-xl border border-[#c3c6d5]/80 shadow-[0_16px_36px_-8px_rgba(17,17,17,0.18)] overflow-hidden">
           {/* Top Swiss Accent Hairline */}

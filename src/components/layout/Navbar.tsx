@@ -17,11 +17,13 @@ import {
   Wallet,
   LayoutGrid,
   Users,
-  BarChart3
+  BarChart3,
+  PanelLeftClose,
+  PanelLeftOpen
 } from 'lucide-react';
 import clsx from 'clsx';
 
-const roles: Role[] = ['Manager', 'Employee', 'Owner', 'Evaluator', 'Recruiter'];
+const roles: Role[] = ['Supervisor', 'Evaluator'];
 
 const navLinks = [
   { label: 'Weekly Roster', href: '/', icon: CalendarDays, accent: 'text-blue-500' },
@@ -32,7 +34,7 @@ const navLinks = [
 ];
 
 export default function Navbar() {
-  const { role, setRole, isEvaluatorDrawerOpen, setEvaluatorDrawerOpen, toast, clearToast } = useAppStore();
+  const { role, setRole, isEvaluatorDrawerOpen, setEvaluatorDrawerOpen, isSidebarOpen, toggleSidebar, toast, clearToast } = useAppStore();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [utcTime, setUtcTime] = useState('08:42:19');
@@ -52,8 +54,13 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Clean Modern Enterprise Sidebar (Desktop) */}
-      <aside className="hidden md:flex fixed left-0 top-0 h-full w-72 bg-white border-r border-slate-200/80 z-50 flex-col justify-between select-none">
+      {/* Sliding Enterprise Sidebar (Desktop) */}
+      <motion.aside
+        initial={false}
+        animate={{ x: isSidebarOpen ? 0 : -288 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="hidden md:flex fixed left-0 top-0 h-full w-72 bg-white border-r border-slate-200/80 z-50 flex-col justify-between select-none shadow-md"
+      >
         <div className="flex flex-col">
           {/* Brand Plate */}
           <div className="h-16 px-6 border-b border-slate-200/80 flex items-center justify-between">
@@ -70,6 +77,13 @@ export default function Navbar() {
                 </span>
               </div>
             </Link>
+            <button
+              onClick={toggleSidebar}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+              title="Slide Sidebar Close"
+            >
+              <PanelLeftClose className="w-4 h-4" />
+            </button>
           </div>
 
           {/* Corporate Context Card */}
@@ -130,10 +144,13 @@ export default function Navbar() {
             <div className="bg-blue-600 h-1.5 rounded-full transition-all duration-500" style={{ width: '98.4%' }}></div>
           </div>
         </div>
-      </aside>
+      </motion.aside>
 
       {/* Clean System Top Header Bar */}
-      <header className="fixed top-0 left-0 md:left-72 right-0 h-16 bg-white/90 backdrop-blur-md border-b border-slate-200/80 z-40 px-6 flex items-center justify-between">
+      <header className={clsx(
+        "fixed top-0 right-0 h-16 bg-white/90 backdrop-blur-md border-b border-slate-200/80 z-40 px-6 flex items-center justify-between transition-all duration-300 ease-in-out",
+        isSidebarOpen ? "left-0 md:left-72" : "left-0"
+      )}>
         <div className="flex items-center gap-4">
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -143,6 +160,22 @@ export default function Navbar() {
             {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </button>
 
+          {/* Desktop Sliding Sidebar Toggle Button */}
+          <button
+            onClick={toggleSidebar}
+            className="hidden md:flex p-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shadow-2xs items-center gap-2 text-xs font-semibold"
+            title={isSidebarOpen ? "Slide Sidebar Out" : "Slide Sidebar In"}
+          >
+            {isSidebarOpen ? (
+              <PanelLeftClose className="w-4 h-4 text-slate-600" />
+            ) : (
+              <>
+                <PanelLeftOpen className="w-4 h-4 text-blue-600 animate-pulse" />
+                <span className="text-slate-800 font-sans">Menu</span>
+              </>
+            )}
+          </button>
+
           <div className="flex items-center gap-4">
             <div className="text-xs font-semibold text-slate-900 font-sans">
               Enterprise Operations
@@ -150,18 +183,6 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center gap-2 text-xs text-slate-500">
               <span className="font-mono">UTC {utcTime}</span>
               <span className="text-slate-300">·</span>
-              <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-[11px] font-medium text-emerald-700 shadow-2xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Supabase: pwkqzzcecjxzmamzkdei</span>
-                <button
-                  type="button"
-                  onClick={() => useAppStore.getState().saveAssignmentsToSupabase()}
-                  className="ml-1 px-1.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-semibold transition-all cursor-pointer shadow-2xs active:scale-95"
-                  title="Sync Roster Assignments to Supabase Cloud"
-                >
-                  Sync Cloud
-                </button>
-              </div>
             </div>
           </div>
         </div>

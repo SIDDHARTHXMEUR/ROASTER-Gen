@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import { DataProvider } from "@/components/providers/DataProvider";
+import AppContainer from "@/components/layout/AppContainer";
+
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "RosterGen | Enterprise Workforce & On-Call Scheduler",
@@ -14,15 +18,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang="en" className={`h-full antialiased ${outfit.variable}`}>
       <body className="min-h-full flex flex-col bg-[#f8fafc] text-slate-900 font-sans">
         <DataProvider>
           <Navbar />
-          <div className="pl-0 md:pl-72 min-h-screen">
-            <main className="pt-16 min-h-screen pb-20">
-              {children}
-            </main>
-          </div>
+          <AppContainer>
+            {children}
+          </AppContainer>
         </DataProvider>
       </body>
     </html>
