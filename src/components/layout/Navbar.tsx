@@ -150,7 +150,18 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center gap-2 text-xs text-slate-500">
               <span className="font-mono">UTC {utcTime}</span>
               <span className="text-slate-300">·</span>
-              <span className="text-emerald-600 font-medium">Synchronized</span>
+              <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-[11px] font-medium text-emerald-700 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Supabase: pwkqzzcecjxzmamzkdei</span>
+                <button
+                  type="button"
+                  onClick={() => useAppStore.getState().saveAssignmentsToSupabase()}
+                  className="ml-1 px-1.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-semibold transition-all cursor-pointer shadow-2xs active:scale-95"
+                  title="Sync Roster Assignments to Supabase Cloud"
+                >
+                  Sync Cloud
+                </button>
+              </div>
             </div>
           </div>
         </div>

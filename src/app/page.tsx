@@ -42,7 +42,7 @@ const DEPT_FILTER: Record<string, string[]> = {
 };
 
 export default function WeeklyRoster() {
-  const { employees, shifts, assignments, setAssignments, showToast, weekStart } = useAppStore();
+  const { employees, shifts, assignments, setAssignments, showToast, weekStart, loadFromSupabase, saveAssignmentsToSupabase, isSyncing } = useAppStore();
   const [activeDept, setActiveDept]     = useState<string>('all');
   const [algoResult, setAlgoResult]     = useState<AlgorithmResult<Assignment[]> | null>(null);
   const [isSolving, setIsSolving]       = useState(false);
@@ -153,9 +153,11 @@ export default function WeeklyRoster() {
   };
 
   useEffect(() => {
-    if (assignments.length === 0) {
-      handleGenerate();
-    }
+    loadFromSupabase().then(() => {
+      if (useAppStore.getState().assignments.length === 0) {
+        handleGenerate();
+      }
+    });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -328,15 +330,20 @@ export default function WeeklyRoster() {
             <h1 className="text-2xl font-bold tracking-tight text-slate-900">Weekly Roster</h1>
             <p className="text-sm text-slate-500 mt-0.5">Active corporate shift distribution, on-call assignments, and constraint adherence.</p>
           </div>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 flex-wrap">
             <button type="button" onClick={handleVerifyAudit}
-              className={clsx('px-3.5 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 border cursor-pointer shadow-xs',
+              className={clsx('px-3.5 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 border cursor-pointer shadow-xs active:scale-95',
                 isAuditVerified ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200')}>
               <Check className={clsx('w-3.5 h-3.5', isAuditVerified ? 'text-emerald-600' : 'text-slate-400')} />
               <span>{isAuditVerified ? 'Audit Verified' : 'Verify Audit'}</span>
             </button>
+            <button type="button" onClick={() => saveAssignmentsToSupabase()} disabled={isSyncing}
+              className="px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs shadow-emerald-500/20 hover:shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 active:scale-95">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>{isSyncing ? 'Syncing...' : 'Sync to Supabase'}</span>
+            </button>
             <button type="button" onClick={handleGenerate} disabled={isSolving || employees.length === 0}
-              className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium shadow-xs shadow-blue-500/20 hover:shadow-sm transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50">
+              className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium shadow-xs shadow-blue-500/20 hover:shadow-sm transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50 active:scale-95">
               <RotateCw className={clsx('w-3.5 h-3.5', isSolving && 'animate-spin')} />
               <span>{isSolving ? 'Running Backtracking...' : 'Optimize Roster'}</span>
             </button>

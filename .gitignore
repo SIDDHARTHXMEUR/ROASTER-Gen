@@ -42,3 +42,5 @@ next-env.d.ts
 
 # agents & local IDE config
 .agents/
+supabase/.temp/
+
